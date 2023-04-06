@@ -77,11 +77,29 @@ public:
 		}
 		else
 		{
-			spdlog::critical("NodeJS is not installed. Please, install NodeJS client in your pc!. [warn: required]");
+			spdlog::critical("NodeJS is not installed. Please, install NodeJS client in your pc!. [warn: R100]");
 			_is_installed_nodejs = false;
 		}
 		#else
-			// for linux
+			int err_code = system("node --version");
+			if (err_code == 0)
+			{
+				spdlog::info("NodeJS is installed. [ok]);
+				_is_installed_nodejs = true;
+			}else {
+				spdlog::critical("NodeJS is not installed.[warn: R100].  Do you want to install it automatically now? (y/n): ");
+				char _tmp;
+				cin >> _tmp;
+				if (_tmp == 'y' or _tmp == 'Y')
+				{
+					system("sudo apt-get update");
+					int if_success = system("sudo apt-get install nodejs");
+					if (if_success == 0){ spdlog::info("NodeJS has been installed  successfully"); }
+					else { spdlog::critical("abort"); } 
+					
+				}
+				
+			}
 		#endif
 
 		io_context.run();
