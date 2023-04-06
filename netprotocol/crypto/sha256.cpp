@@ -127,6 +127,10 @@ std::string sha256(std::string input)
     char buf[2*SHA256::DIGEST_SIZE+1];
     buf[2*SHA256::DIGEST_SIZE] = 0;
     for (int i = 0; i < SHA256::DIGEST_SIZE; i++)
+        #ifdef _WIN32
         sprintf_s(buf + i * 2, 3, "%02x", digest[i]);
+        #elif defined(__linux__)
+        sprintf(buf + i * 2, "%02x", digest[i]);
+        #endif
     return std::string(buf);
 }
