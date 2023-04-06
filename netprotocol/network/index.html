@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TCP Server Data</title>
+
+ 
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+  }
+  #header {
+    background-color: #2c3e50;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+  }
+  #header h1 {
+    margin-top: 0;
+    font-size: 36px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  #header a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+    margin-left: 20px;
+  }
+  #header a:hover {
+    text-decoration: underline;
+  }
+  #chat-container {
+    width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 0 10px #aaa;
+  }
+  #chat {
+    height: 300px;
+    overflow-y: scroll;
+    margin-bottom: 20px;
+  }
+  #chat p {
+    font-size: 16px;
+    line-height: 1.5;
+    margin: 10px 0;
+  }
+  #input-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #input-container input[type="text"] {
+    flex-grow: 1;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+    font-size: 16px;
+  }
+   
+</style>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+  socket.on('data', (data) => {
+    const message = document.createElement('p');
+    message.textContent = data;
+    document.getElementById("chat").appendChild(message);
+  });
+  function sendMessage() {
+    const input = document.getElementById("message-input");
+    if (input.value !== "") {
+      socket.emit('message', input.value);
+      input.value = "";
+    }
+  }
+</script>
+
+  </head>
+  <body>
+    <div id="header">
+      <h1>NetProtocol Explorer</h1>
+      <a href="https://github.com/ynwqmv/netprotocol/releases">Download Client</a>
+      <a href="https://github.com/ynwqmv/netprotocol/tree/master/NetProtocol%2B%2B">View Source Code</a>
+    </div>
+    <div id="chat-container">
+      <div id="chat">
+        <h2>Latest messages:</h2>
+      </div>
+
+ 
+
+  </div>
+</div>
+
+  </body>
+</html> 
