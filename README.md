@@ -22,7 +22,7 @@
 [![Discussions](https://img.shields.io/github/license/dec0dOS/amazing-github-template.svg?style=flat-square)](https://github.com/ynwqmv/netprotocol/discussions/3)
 [![Source](https://img.shields.io/badge/YouTube-@qmvcpp-blue.svg)](https://www.youtube.com/channel/UCTjy50H6WsJtW_7lXo2NW8g)
 
-[![Network](https://img.shields.io/badge/Network-11.51.743-blue.svg)](https://github.com/ynwqmv/netplatform/blob/master/NETWORK.md)
+[![Network](https://img.shields.io/badge/Network-0x79C2-red.svg)](https://github.com/ynwqmv/netplatform/blob/master/NETWORK.md)
 
 
 </div>
