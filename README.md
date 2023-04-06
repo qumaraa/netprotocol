@@ -7,7 +7,7 @@
 <div align="center">
   <b>NetProtocol</b>
   <br />
-  <b>Full-fledged TCP network with explorer support</b>
+  <b>A Crossplatform & Full-fledged TCP network with explorer support</b>
   <br />
   <a href="https://github.com/ynwqmv/netprotocol/discussions/3">Discussions</a>
   ·
@@ -22,7 +22,7 @@
 [![Discussions](https://img.shields.io/github/license/dec0dOS/amazing-github-template.svg?style=flat-square)](https://github.com/ynwqmv/netprotocol/discussions/3)
 [![Source](https://img.shields.io/badge/YouTube-@qmvcpp-blue.svg)](https://www.youtube.com/channel/UCTjy50H6WsJtW_7lXo2NW8g)
 
-[![Network](https://img.shields.io/badge/Network-11.51.743-blue.svg)](https://github.com/ynwqmv/netplatform/blob/master/NETWORK.md)
+[![Network](https://img.shields.io/badge/Network-0x79C2-red.svg)](https://github.com/ynwqmv/netplatform/blob/master/NETWORK.md)
 
 
 </div>
@@ -48,9 +48,21 @@
 
 
 ## Requirements
-| CLI Manager Version | Support | NodeJS Required| GUI Support | Memory | Network Version |
-|---------------------|---------|-----|--------|------|--------|
-|      v3.0           |    ✔️  |  ✔️ |  NO|  ~7.1 MB |  0x76C2  |
-|      v3.11.7        |    ✔️  | ✔️  | ✔️ |  ~10.5 MB | 0x79C2 |
+| CLI Manager Version | Support | NodeJS Required| GUI Support  | Crossplatform | Memory | Network Version |
+|---------------------|---------|-----|--------|------|------|--------|
+|      v3.0           |    ✔️  |  ✔️ |  NO|  NO |~7.1 MB |  0x76C2  |
+|      v3.11.7 (L)      |    ✔️  | ✔️  | ✔️ | ✔️ |  ~10.5 MB | 0x79C2 |
+ 
  
  ____
+
+| Commands | Bio |
+|----------| ----|
+| /socks   |     |
+| /online  |     |
+| /send    |     |
+| /help    |     |
+| /hello   |     |
+
+____
+
