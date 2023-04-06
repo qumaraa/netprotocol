@@ -386,7 +386,7 @@ boost::asio::write(*sock,
 					{
 #if defined(_WIN32)
 						auto message = std::make_shared<std::string>(std::format("\033[42mNodeJS: installed ({})\nVersion: {}\nPlatform: Windows ({})\nPlatform: Linux ({})\nOnline: {}\033[0m\n\r\n",
-							_is_installed_nodejs, __NETV, _WIN32, __linux__, online));
+							_is_installed_nodejs, __NETV, _WIN32, false, online));
 #elif defined(__linux__)
 						auto message = std::make_shared<std::string>(fmt::format("\033[42mNodeJS: installed ({})\nVersion: {}\nPlatform: Windows ({})\nPlatform: Linux ({})\nOnline: {}\033[0m\n\r\n",
 							_is_installed_nodejs, __NETV, false, __linux__, online));
