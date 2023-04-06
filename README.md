@@ -7,7 +7,7 @@
 <div align="center">
   <b>NetProtocol</b>
   <br />
-  <b>Full-fledged TCP network with explorer support</b>
+  <b>A Crossplatform & Full-fledged TCP network with explorer support</b>
   <br />
   <a href="https://github.com/ynwqmv/netprotocol/discussions/3">Discussions</a>
   ·
