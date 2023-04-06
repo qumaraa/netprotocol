@@ -51,7 +51,7 @@
 | CLI Manager Version | Support | NodeJS Required| GUI Support  | Crossplatform | Memory | Network Version |
 |---------------------|---------|-----|--------|------|------|--------|
 |      v3.0           |    ✔️  |  ✔️ |  NO|  NO |~7.1 MB |  0x76C2  |
-|      v3.11.7        |    ✔️  | ✔️  | ✔️ | ✔️ |  ~10.5 MB | 0x79C2 |
+|      v3.11.7 (L)       |    ✔️  | ✔️  | ✔️ | ✔️ |  ~10.5 MB | 0x79C2 |
  
  
  ____
