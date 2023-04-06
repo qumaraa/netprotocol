@@ -4,9 +4,15 @@
 # define NETWORK_SERVER_HPP
 
 
-# if _HAS_CXX20 or _HAS_CXX23 // cause of CXX20 features (std::format, async send/recieve)
-# define __NETV 0x79C2        // *** v31170 *** 
-# endif
+#if defined(_WIN32) // Windows
+	# if _HAS_CXX20
+	# define __NETV 0x79C2        // *** v31170 *** 
+	# endif
+#elif defined(__linux__) // Linux
+	# define __NETV 0x79C2L  	
+
+#endif
+
 
 #if defined(__NETV)
 #include <fstream>
@@ -24,14 +30,14 @@
 # include <sstream>
 # include <unordered_map>
 
-#ifdef WIN32
+#ifdef _WIN32
 # include <format>
 # else
 # include <fmt/format.h> 
 # endif
 
 
-#ifdef WIN32
+#ifdef _WIN32
 typedef unsigned short int uint;
 
 #endif
@@ -68,7 +74,7 @@ public:
 	// running the server
 	void run()
 	{
-		#if defined(WIN32)
+#if defined(_WIN32)
 		int err_code = system("node --version");
 		if (err_code == 0)
 		{
@@ -80,7 +86,8 @@ public:
 			spdlog::critical("NodeJS is not installed. Please, install NodeJS client in your pc!. [warn: R100]");
 			_is_installed_nodejs = false;
 		}
-		#else
+
+#elif defined(__linux__)
 			int err_code = system("node --version");
 			if (err_code == 0)
 			{
@@ -125,6 +132,8 @@ private:
 				host_data.make << host_data.host << ':' << host_data.port;
 				host_data.make_hash = sha256(host_data.make.str());
 
+				
+#ifdef _WIN32
 
 				std::string filename = "db.txt";
 				SetFileAttributesA(filename.c_str(), FILE_ATTRIBUTE_NORMAL);
@@ -148,10 +157,35 @@ private:
 				file.close();
 				SetFileAttributesA(filename.c_str(), FILE_ATTRIBUTE_READONLY);
 
+			
+				
+				
+#elif defined(__linux__)
 
+				std::string filename = "db.txt";
+				system("chmod 644 db.txt"); // set read & write
+				std::ofstream file;
+				file.open(filename, std::ios::app);
+				if (file.is_open())
+				{
+					file << host_data.make_hash << "\r\n";
+				}
+				else
+				{
+					try
+					{
+						throw netv::stream_error(std::format("Couldn't add data in `{}`", filename));
+					}
+					catch (netv::stream_error& re)
+					{
+						spdlog::warn("fstream: {}", re.what());
+					}
+				}
+				file.close();
+				system("chmod 444 db.txt"); // set read-only 
+			
+#endif
 				spdlog::info("> New connection established: {}", host_data.make_hash);
-
-
 				for (const auto& sock : sockets)
 				{
 					boost::asio::write(*sock,
@@ -195,7 +229,12 @@ private:
 							}
 							else
 							{
+
+#if defined(_WIN32)
 								boost::asio::write(*sock, boost::asio::buffer(std::format("\r\n[{}]", std::to_string(socket->remote_endpoint().port()))));
+#elif defined(__linux__)
+								boost::asio::write(*sock, boost::asio::buffer(fmt::format("\r\n[{}]", std::to_string(socket->remote_endpoint().port()))));
+#endif
 								boost::asio::write(*sock, boost::asio::buffer(*message));
 							}
 
@@ -221,8 +260,13 @@ private:
 							{
 								if (sock != socket)
 								{
+#if defined(_WIN32)
 									boost::asio::write(*sock,
 										boost::asio::buffer(std::format("> Client {} disconnected", it->first)));
+#elif defined(__linux__)
+									boost::asio::write(*sock,
+										boost::asio::buffer(fmt::format("> Client {} disconnected", it->first)));
+#endif
 								}
 							}
 							--online;
@@ -245,8 +289,13 @@ private:
 							{
 								if (sock != socket)
 								{
+#if defined(_WIN32)
 									boost::asio::write(*sock,
 										boost::asio::buffer(std::format("> Client {} disconnected", it->first)));
+#elif defined(__linux__)
+									boost::asio::write(*sock,
+										boost::asio::buffer(fmt::format("> Client {} disconnected", it->first)));
+#endif
 								}
 							}
 							--online;
@@ -271,8 +320,13 @@ private:
 
 				if (sock != socket)
 				{
+#if defined(_WIN32)
 					auto message = std::make_shared<std::string>(std::format("\033[42mHELLO EVERYONE! FROM: [{}]\033[0m\n\r\n",
 						std::to_string(sock->remote_endpoint().port())));
+#elif defined(__linux__)
+					auto message = std::make_shared<std::string>(fmt::format("\033[42mHELLO EVERYONE! FROM: [{}]\033[0m\n\r\n",
+						std::to_string(sock->remote_endpoint().port())));
+#endif
 					boost::asio::async_write(*sock, boost::asio::buffer(*message),
 						[socket, message](const boost::system::error_code& error, std::size_t bytes_transferred) {
 							if (error) {
@@ -289,8 +343,11 @@ private:
 			{
 				if (sock == socket)
 				{
+#if defined(_WIN32)
 					auto message = std::make_shared<std::string>(std::format("\033[42mOnline: {}\033[0m\n\r\n", std::to_string(online)));
-
+#elif defined(__linux__)
+					auto message = std::make_shared<std::string>(fmt::format("\033[42mOnline: {}\033[0m\n\r\n", std::to_string(online)));
+#endif
 					boost::asio::async_write(*sock, boost::asio::buffer(*message),
 						[socket, message](const boost::system::error_code& error, std::size_t bytes_transferred) {
 							if (error) {
@@ -313,10 +370,13 @@ private:
 				{
 					if (sock == socket)
 					{
-
+#if defined(_WIN32)
 						auto message = std::make_shared<std::string>(std::format("\033[42mNodeJS: installed ({})\033[0m\n\r\n",
 							_is_installed_nodejs));
-
+#elif defined(__linux__)
+						auto message = std::make_shared<std::string>(fmt::format("\033[42mNodeJS: installed ({})\033[0m\n\r\n",
+							_is_installed_nodejs));
+#endif 
 						boost::asio::async_write(*sock, boost::asio::buffer(*message),
 							[socket, message](const boost::system::error_code& error, std::size_t bytes_transferred) {
 								if (error) {
@@ -349,14 +409,16 @@ private:
 			recipient.erase(recipient.find_last_not_of(" ") + 1);
 
 			auto it = data.find(recipient);
+			
 			if (it != data.end())
 			{
-				/*boost::asio::write(*(it->second), boost::asio::buffer("Private message from [" +
-					std::to_string(socket->remote_endpoint().port()) + "] => " + text + "\r\n"));*/
-
+#if defined(_WIN32)
 				auto message = std::make_shared<std::string>(std::format("\033[46mPrivate message from [{}] : {}\033[0m\n\r\n",
 					std::to_string(socket->remote_endpoint().port()), text));
-
+#elif defined(_WIN32)
+				auto message = std::make_shared<std::string>(fmt::format("\033[46mPrivate message from [{}] : {}\033[0m\n\r\n",
+					std::to_string(socket->remote_endpoint().port()), text));
+#endif
 				boost::asio::async_write(*it->second, boost::asio::buffer(*message),
 					[socket, message](const boost::system::error_code& error, std::size_t bytes_transferred) {
 						if (error) {
@@ -366,8 +428,14 @@ private:
 			}
 			else
 			{
+#if defined(_WIN32)
 
-				auto message = std::make_shared < std::string >(std::format("\033[41mError: user `{}` not found. Try `/socks` to discover all connected users\033[0m\n\r\n", recipient));
+				auto message = std::make_shared < std::string >
+					(std::format("\033[41mError: user `{}` not found. Try `/socks` to discover all connected users\033[0m\n\r\n", recipient));
+#elif defined(__linux__)
+				auto message = std::make_shared < std::string >
+					(fmt::format("\033[41mError: user `{}` not found. Try `/socks` to discover all connected users\033[0m\n\r\n", recipient));
+#endif
 				boost::asio::async_write(*socket,
 					boost::asio::buffer(*message), [this, message, socket](const boost::system::error_code& error, std::size_t bytes_transferred) {
 						if (error)
@@ -377,15 +445,26 @@ private:
 							{
 								if (sock == socket)
 								{
+#if defined(_WIN32)
 									boost::asio::write(*sock,
 										boost::asio::buffer(std::format("Error while sending message: {}",
 											error.message())));
+					
+#elif defined(__linux__)
+									boost::asio::write(*sock,
+										boost::asio::buffer(fmt::format("Error while sending message: {}",
+											error.message())));
+#endif
 								}
 							}
 						}
 						else
 						{
+#if defined(_WIN32)
 							auto smessage = std::make_shared<std::string>(std::format("\r\n[{} bytes]", bytes_transferred));
+#elif defined(__linux__)
+							auto smessage = std::make_shared<std::string>(fmt::format("\r\n[{} bytes]", bytes_transferred));
+#endif
 							for (const auto& sock : sockets)
 							{
 								if (sock == socket)
@@ -432,11 +511,18 @@ private:
 				// Perform the update operation here
 				spdlog::info("Online: {}", std::to_string(online));
 				
-				
 				for (const auto& sock : sockets)
 				{
+#if defined(_WIN32)
 						boost::asio::write(*sock,
 							boost::asio::buffer(std::format("Online: {}", std::to_string(online))));
+
+#elif defined(__linux__)
+					boost::asio::write(*sock,
+						
+						boost::asio::buffer(fmt::format("Online: {}", std::to_string(online))));
+
+#endif
 				}
 
 				// Reset the timer to expire after another 10 seconds
