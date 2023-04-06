@@ -1,3 +1,23 @@
+/**
+			    CROSSPLATFORM NET++.
+  ------------------------------------------------------
+		   Copyright (c) (*), QMV Corporation.
+  ------------------------------------------------------
+
+* @file:        server.hpp
+* @brief:       Crossplatform Network(TCP) available for Windows/Linux (x64)
+* @issue:		#1
+* @release:     Alpha Builds
+* @modified:    -
+* @author:      @ynwqmv
+
+* @version:     0x79C2 && 0x79C2L
+* @SERVER:      Crossplatform with GUI and WEB Explorers
+
+**/
+
+
+
 # pragma once
 # ifndef NETWORK_SERVER_HPP
 
@@ -20,18 +40,20 @@
 # include <boost/asio.hpp>
 # include <spdlog/spdlog.h>
 
+
 # include "../system/except.hpp"
 # include "../crypto/sha256.h"
+
 # include "../crypto/sha256.cpp"
 # include <memory>
 # include <chrono>
- 
-
 # include <sstream>
 # include <unordered_map>
 
+
 #ifdef _WIN32
 # include <format>
+
 # else
 # include <fmt/format.h> 
 # endif
@@ -62,19 +84,14 @@ public:
 		: io_context(), port(_port),
 		acceptor(io_context, tcp::endpoint(tcp::v4(), port))
 	{
-
 		spdlog::info("Server is running on port: {}", port);
-		update(); 
-
-		listen_for_connections();
-
-
+		update();  // updating server
+		listen_for_connections(); // listenning for new connections and accepting to the server
 	}
-
 	// running the server
 	void run()
 	{
-#if defined(_WIN32)
+#if defined(_WIN32) 
 		int err_code = system("node --version");
 		if (err_code == 0)
 		{
@@ -114,8 +131,6 @@ public:
 
 	}
 
-
-
 private:
 	void listen_for_connections()
 	{
@@ -126,14 +141,11 @@ private:
 
 				 
 				sockets.emplace_back(socket);
-
-
 				host_data.host = socket->remote_endpoint().address().to_string();
 				host_data.port = std::to_string(socket->remote_endpoint().port());
+				
 				host_data.make << host_data.host << ':' << host_data.port;
 				host_data.make_hash = sha256(host_data.make.str());
-
-				
 #ifdef _WIN32
 
 				std::string filename = "db.txt";
@@ -162,9 +174,6 @@ private:
 				file.close();
 				SetFileAttributesA(filename.c_str(), FILE_ATTRIBUTE_READONLY);
 
-			
-				
-				
 #elif defined(__linux__)
 
 				std::string filename = "db.txt";
@@ -423,7 +432,6 @@ boost::asio::write(*sock,
 			recipient.erase(recipient.find_last_not_of(" ") + 1);
 
 			auto it = data.find(recipient);
-			
 			if (it != data.end())
 			{
 #if defined(_WIN32)
@@ -432,6 +440,7 @@ boost::asio::write(*sock,
 #elif defined(__linux__)
 				auto message = std::make_shared<std::string>(fmt::format("\033[46mPrivate message from [{}] : {}\033[0m\n\r\n",
 					std::to_string(socket->remote_endpoint().port()), text));
+
 #endif
 				boost::asio::async_write(*it->second, boost::asio::buffer(*message),
 					[socket, message](const boost::system::error_code& error, std::size_t bytes_transferred) {
@@ -538,8 +547,7 @@ boost::asio::write(*sock,
 
 #endif
 				}
-
-				// Reset the timer to expire after another 10 seconds
+			// Reset the timer to expire after another 10 seconds
 				print_data_server();
 				update();
 			}
@@ -550,29 +558,25 @@ boost::asio::write(*sock,
 			});
 	}
 	 
-	public:
-		static unsigned short get_online()
-		{
-			return online;
-		}
- 
 private:
+	/*~~~~~~~~~~~~~BOOST~~~~~~~~~~~~~~*/
 	boost::asio::io_context io_context;
-
 	uint port;
 	HHash host_data;
-	
 	tcp::acceptor acceptor;
-	std::vector<std::shared_ptr<tcp::socket>> sockets;
-	
-	std::unordered_map<std::string, std::shared_ptr<tcp::socket>> data;
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+	/*~~~~~~~~~~~CONTAINERS~~~~~~~~~~~*/
+	std::vector<std::shared_ptr<tcp::socket>> sockets;
+	std::unordered_map<std::string, std::shared_ptr<tcp::socket>> data;
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+	/*~~~~~~~~~~~~~STATS~~~~~~~~~~~~~~*/
 	static unsigned short online;
-	 
-	bool _is_installed_nodejs = false;
-	
-	 
+	bool _is_installed_nodejs = false; // boolean var for checking nodejs installation 
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 };
+
 unsigned short Server::online = 0;
  
  
