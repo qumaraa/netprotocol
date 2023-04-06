@@ -1,12 +1,12 @@
 /**
-			    CROSSPLATFORM NET++.
+		CROSSPLATFORM NET++.
   ------------------------------------------------------
-		   Copyright (c) (*), QMV Corporation.
+       Copyright (c) (*), QMV Corporation.
   ------------------------------------------------------
 
 * @file:        server.hpp
 * @brief:       Crossplatform Network(TCP) available for Windows/Linux (x64)
-* @issue:		#1
+* @issue:	#1
 * @release:     Alpha Builds
 * @modified:    -
 * @author:      @ynwqmv
