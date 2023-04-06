@@ -91,12 +91,13 @@ public:
 			int err_code = system("node --version");
 			if (err_code == 0)
 			{
-				spdlog::info("NodeJS is installed. [ok]);
+				spdlog::info("NodeJS is installed. [ok]");
+
 				_is_installed_nodejs = true;
 			}else {
 				spdlog::critical("NodeJS is not installed.[warn: R100].  Do you want to install it automatically now? (y/n): ");
 				char _tmp;
-				cin >> _tmp;
+				std::cin >> _tmp;
 				if (_tmp == 'y' or _tmp == 'Y')
 				{
 					system("sudo apt-get update");
@@ -147,7 +148,11 @@ private:
 				{
 					try
 					{
+#if defined(_WIN32)
 						throw netv::stream_error(std::format("Couldn't add data in `{}`", filename));
+#elif defined(__linux__)
+                        throw netv::stream_error(fmt::format("Couldn't add data in `{}`", filename));
+#endif
 					}
 					catch (netv::stream_error& re)
 					{
@@ -174,8 +179,12 @@ private:
 				{
 					try
 					{
+#if defined(_WIN32)
 						throw netv::stream_error(std::format("Couldn't add data in `{}`", filename));
-					}
+#elif defined(__linux__)					
+                       throw netv::stream_error(fmt::format("Couldn't add data in `{}`", filename));
+#endif
+}
 					catch (netv::stream_error& re)
 					{
 						spdlog::warn("fstream: {}", re.what());
@@ -188,8 +197,13 @@ private:
 				spdlog::info("> New connection established: {}", host_data.make_hash);
 				for (const auto& sock : sockets)
 				{
+#if defined(_WIN32)
 					boost::asio::write(*sock,
 						boost::asio::buffer(std::format("> New user has joined: {}\n", host_data.make_hash)));
+#elif defined(__linux__)
+boost::asio::write(*sock,
+						boost::asio::buffer(fmt::format("> New user has joined: {}\n", host_data.make_hash)));
+#endif
 				}
 				 ;
 				data[host_data.make_hash] = socket;
@@ -371,11 +385,11 @@ private:
 					if (sock == socket)
 					{
 #if defined(_WIN32)
-						auto message = std::make_shared<std::string>(std::format("\033[42mNodeJS: installed ({})\033[0m\n\r\n",
-							_is_installed_nodejs));
+						auto message = std::make_shared<std::string>(std::format("\033[42mNodeJS: installed ({})\nVersion: {}\nPlatform: Windows ({})\nPlatform: Linux ({})\nOnline: {}\033[0m\n\r\n",
+							_is_installed_nodejs, __NETV, _WIN32, __linux__, online));
 #elif defined(__linux__)
-						auto message = std::make_shared<std::string>(fmt::format("\033[42mNodeJS: installed ({})\033[0m\n\r\n",
-							_is_installed_nodejs));
+						auto message = std::make_shared<std::string>(fmt::format("\033[42mNodeJS: installed ({})\nVersion: {}\nPlatform: Windows ({})\nPlatform: Linux ({})\nOnline: {}\033[0m\n\r\n",
+							_is_installed_nodejs, __NETV, false, __linux__, online));
 #endif 
 						boost::asio::async_write(*sock, boost::asio::buffer(*message),
 							[socket, message](const boost::system::error_code& error, std::size_t bytes_transferred) {
@@ -415,7 +429,7 @@ private:
 #if defined(_WIN32)
 				auto message = std::make_shared<std::string>(std::format("\033[46mPrivate message from [{}] : {}\033[0m\n\r\n",
 					std::to_string(socket->remote_endpoint().port()), text));
-#elif defined(_WIN32)
+#elif defined(__linux__)
 				auto message = std::make_shared<std::string>(fmt::format("\033[46mPrivate message from [{}] : {}\033[0m\n\r\n",
 					std::to_string(socket->remote_endpoint().port()), text));
 #endif
