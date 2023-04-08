@@ -6,15 +6,18 @@
 
 * @file:        server.hpp
 * @brief:       Crossplatform Network(TCP) available for Windows/Linux (x64)
-* @issue:	#1
-* @release:     Alpha Builds
+* @issue:		#1
+				https://github.com/ynwqmv/netprotocol/issues/1
+* @release:     0x79C2-venera
+				https://github.com/ynwqmv/netprotocol/releases
 * @modified:    -
 * @author:      @ynwqmv
 
 * @version:     0x79C2 && 0x79C2L
-* @SERVER:      Crossplatform with GUI and WEB Explorers
+* @network_info:Crossplatform with GUI and WEB Explorers
 
 **/
+
 
 
 
@@ -29,9 +32,9 @@
 	# define __NETV 0x79C2        // *** v31170 *** 
 	# endif
 #elif defined(__linux__) // Linux
-	# define __NETV 0x79C2L  	
-
+	# define __NETV 0x79C2L 	
 #endif
+
 
 
 #if defined(__NETV)
@@ -64,7 +67,11 @@ typedef unsigned short int uint;
 
 #endif
 using boost::asio::ip::tcp;
-
+/*
+	* @brief: inheritance-blocked.
+		* using for hashing(SHA256) host and port
+		* @more: https://github.com/ynwqmv/netprotocol/blob/master/README.md
+*/
 struct HHash final
 {
 	std::string host;	   /* host */
@@ -88,7 +95,9 @@ public:
 		update();  // updating server
 		listen_for_connections(); // listenning for new connections and accepting to the server
 	}
-	// running the server
+	/*
+		* @brief: runs the network. in-built nodejs require.
+	*/
 	void run()
 	{
 #if defined(_WIN32) 
@@ -132,6 +141,10 @@ public:
 	}
 
 private:
+
+	/*
+		* @brief: accepting new connections
+	*/
 	void listen_for_connections()
 	{
 
@@ -503,15 +516,22 @@ boost::asio::write(*sock,
 		}
 	}
 
-
+	/*
+	* @brief: prints connected sockets' hash to server
+	*/
 	inline void print_data_server() const
 	{
+		/*
+		 	* for_each 
+		*/
 		for (const auto& _data : data)
 		{
 			spdlog::info("Users connected: {}", _data.first);
 		}
 	}
-
+	/*
+ 		*  @brief: each connected users see the message that someone has been connected. 
+	*/
 	inline void print_data(const std::shared_ptr<tcp::socket>& socket) const
 	{
 		for (const auto& sock : sockets)   /// Iterates through all sockets
@@ -525,7 +545,7 @@ boost::asio::write(*sock,
 			}
 		}
 	}
-	/* Timer => 30 seconds: Each 30 seconds we calling update() with its data */
+	/* @brief: each 30 seconds we calling update() with its data */
 	inline void update() {
 		auto timer = std::make_shared<boost::asio::steady_timer>(io_context);
 		timer->expires_after(std::chrono::seconds(30));
@@ -578,8 +598,5 @@ private:
 };
 
 unsigned short Server::online = 0;
- 
- 
-
 # endif  // __NETV
 # endif // NETWORK_SERVER_HPP
