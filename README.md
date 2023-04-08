@@ -24,6 +24,16 @@
 
 [![Network](https://img.shields.io/badge/Network-0x79C2-red.svg)](https://github.com/ynwqmv/netplatform/blob/master/NETWORK.md)
 
+# Server
+![image](https://user-images.githubusercontent.com/112755279/230722381-61ac4aa3-4865-4d73-9fc6-2c2f74492dc2.png)
+# Client
+![image](https://user-images.githubusercontent.com/112755279/230722468-e2191737-3bed-4894-98a8-d12bfb18d12e.png)
+# Web Explorer
+![image](https://user-images.githubusercontent.com/112755279/230722626-f228c735-0ff4-4714-9e0b-ca73c43ecbea.png)
+# GUI Explorer (Beta)
+![image](https://user-images.githubusercontent.com/112755279/230722702-c80846af-b170-4d5e-a0ae-8f2400fc9fe2.png)
+![image](https://user-images.githubusercontent.com/112755279/230722711-6966c45a-90af-40da-9453-9613c669b402.png)
+
 
 </div>
 <details open="open">
@@ -54,15 +64,15 @@
 |      v3.11.7 (L)      |    ✔️  | ✔️  | ✔️ | ✔️ |  ~10.5 MB | 0x79C2 |
  
  
- ____
+ 
 
 | Commands | Bio |
 |----------| ----|
-| /socks   |     |
-| /online  |     |
-| /send    |     |
-| /help    |     |
-| /hello   |     |
+| /socks   |  Discover all connected users SHA256hash    |
+| /online  |  Discover online    |
+| /send    |  Send private message only for recipient by users unique hash  |
+| /info    |  Discover system & server info | 
+| /hello   |  Sending Hello message for all connected users   |
 
 ____
 
