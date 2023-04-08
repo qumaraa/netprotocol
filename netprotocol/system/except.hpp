@@ -1,4 +1,13 @@
-/* SYSTEM/EXCEPT.HPP * exception classes | v3.2.9 */
+/*=============================================================================
+                    Copyright (c) by QMV Corporation
+ * Author: ynwqmv
+ * File: except.hpp
+ * Description: Exception Classes for Network
+
+ * Cross-platform network written by using Boost.Asio
+ * GitHub: https://github.com/ynwqmv/netprotocol
+ * Dependencies: NodeJS, libspdlog, libboost, libfmt(linux)
+ *===========================================================================*/
 
 
 #ifndef SYSTEM_EXCEPT_HPP
