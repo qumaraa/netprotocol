@@ -6,10 +6,10 @@
 
 * @file:        server.hpp
 * @brief:       Crossplatform Network(TCP) available for Windows/Linux (x64)
-* @issue:		#1
-				https://github.com/ynwqmv/netprotocol/issues/1
+* @issue:	#1
+		https://github.com/ynwqmv/netprotocol/issues/1
 * @release:     0x79C2-venera
-				https://github.com/ynwqmv/netprotocol/releases
+		https://github.com/ynwqmv/netprotocol/releases
 * @modified:    -
 * @author:      @ynwqmv
 
