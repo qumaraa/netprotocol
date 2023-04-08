@@ -19,7 +19,7 @@ set(Boost_USE_MULTITHREADED ON)
 find_package(Boost REQUIRED COMPONENTS system thread)
 
 
-add_executable(${PROJECT_NAME} NetProtocol++.cpp)
+add_executable(${PROJECT_NAME} main.cpp)
 
 
 target_link_libraries(${PROJECT_NAME}

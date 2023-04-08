@@ -1,7 +1,7 @@
 /**
 		CROSSPLATFORM NET++.
   ------------------------------------------------------
-	   Copyright (c) (*), QMV Corporation.
+		   Copyright (c) (*), QMV Corporation.
   ------------------------------------------------------
 * @file:        server.hpp
 * @brief:       Crossplatform Network(TCP) available for Windows/Linux (x64)
@@ -12,7 +12,8 @@
 * @modified:    -
 * @author:      @ynwqmv
 * @version:     0x79C2 && 0x79C2L
-* @network_info:Crossplatform with GUI and WEB Explorers
+* @SERVER:      Crossplatform with GUI and WEB Explorers
+
 **/
 
 
@@ -29,7 +30,8 @@
 # define __NETV 0x79C2        // *** v31170 *** 
 # endif
 #elif defined(__linux__) // Linux
-# define __NETV 0x79C2L 	
+	# define __NETV 0x79C2L  	
+
 #endif
 
 
@@ -519,17 +521,12 @@ private:
 	*/
 	inline void print_data_server() const
 	{
-		/*
-			* for_each
-		*/
 		for (const auto& _data : data)
 		{
 			spdlog::info("Users connected: {}", _data.first);
 		}
 	}
-	/*
-		*  @brief: each connected users see the message that someone has been connected.
-	*/
+
 	inline void print_data(const std::shared_ptr<tcp::socket>& socket) const
 	{
 		for (const auto& sock : sockets)   /// Iterates through all sockets
