@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
     }
 
     // =>> Convert the command line argument to an integer 
-    int port = std::stoi(argv[1]); // ^^ string .. to .. integer
+    int port = std::stoi(argv[1]); // ^^ port .. from -> string .. to .. integer
      
     try
     {

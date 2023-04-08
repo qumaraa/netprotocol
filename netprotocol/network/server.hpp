@@ -1,20 +1,20 @@
 /**
-			    CROSSPLATFORM NET++.
+		CROSSPLATFORM NET++.
   ------------------------------------------------------
-		   Copyright (c) (*), QMV Corporation.
+	   Copyright (c) (*), QMV Corporation.
   ------------------------------------------------------
-
 * @file:        server.hpp
 * @brief:       Crossplatform Network(TCP) available for Windows/Linux (x64)
-* @issue:		#1
-* @release:     Alpha Builds
+* @issue:	#1
+		https://github.com/ynwqmv/netprotocol/issues/1
+* @release:     0x79C2-venera
+		https://github.com/ynwqmv/netprotocol/releases
 * @modified:    -
 * @author:      @ynwqmv
-
 * @version:     0x79C2 && 0x79C2L
-* @SERVER:      Crossplatform with GUI and WEB Explorers
-
+* @network_info:Crossplatform with GUI and WEB Explorers
 **/
+
 
 
 
@@ -25,13 +25,13 @@
 
 
 #if defined(_WIN32) // Windows
-	# if _HAS_CXX20
-	# define __NETV 0x79C2        // *** v31170 *** 
-	# endif
+# if _HAS_CXX20
+# define __NETV 0x79C2        // *** v31170 *** 
+# endif
 #elif defined(__linux__) // Linux
-	# define __NETV 0x79C2L  	
-
+# define __NETV 0x79C2L 	
 #endif
+
 
 
 #if defined(__NETV)
@@ -64,7 +64,11 @@ typedef unsigned short int uint;
 
 #endif
 using boost::asio::ip::tcp;
-
+/*
+	* @brief: inheritance-blocked.
+		* using for hashing(SHA256) host and port
+		* @more: https://github.com/ynwqmv/netprotocol/blob/master/README.md
+*/
 struct HHash final
 {
 	std::string host;	   /* host */
@@ -79,7 +83,7 @@ class Server
 {
 
 public:
-	 
+
 	explicit Server(uint _port)
 		: io_context(), port(_port),
 		acceptor(io_context, tcp::endpoint(tcp::v4(), port))
@@ -88,7 +92,9 @@ public:
 		update();  // updating server
 		listen_for_connections(); // listenning for new connections and accepting to the server
 	}
-	// running the server
+	/*
+		* @brief: runs the network. in-built nodejs require.
+	*/
 	void run()
 	{
 #if defined(_WIN32) 
@@ -105,33 +111,38 @@ public:
 		}
 
 #elif defined(__linux__)
-			int err_code = system("node --version");
-			if (err_code == 0)
-			{
-				spdlog::info("NodeJS is installed. [ok]");
+		int err_code = system("node --version");
+		if (err_code == 0)
+		{
+			spdlog::info("NodeJS is installed. [ok]");
 
-				_is_installed_nodejs = true;
-			}else {
-				spdlog::critical("NodeJS is not installed.[warn: R100].  Do you want to install it automatically now? (y/n): ");
-				char _tmp;
-				std::cin >> _tmp;
-				if (_tmp == 'y' or _tmp == 'Y')
-				{
-					system("sudo apt-get update");
-					int if_success = system("sudo apt-get install nodejs");
-					if (if_success == 0){ spdlog::info("NodeJS has been installed  successfully"); }
-					else { spdlog::critical("abort"); } 
-					
-				}
-				
+			_is_installed_nodejs = true;
+		}
+		else {
+			spdlog::critical("NodeJS is not installed.[warn: R100].  Do you want to install it automatically now? (y/n): ");
+			char _tmp;
+			std::cin >> _tmp;
+			if (_tmp == 'y' or _tmp == 'Y')
+			{
+				system("sudo apt-get update");
+				int if_success = system("sudo apt-get install nodejs");
+				if (if_success == 0) { spdlog::info("NodeJS has been installed  successfully"); }
+				else { spdlog::critical("abort"); }
+
 			}
-		#endif
+
+		}
+#endif
 
 		io_context.run();
 
 	}
 
 private:
+
+	/*
+		* @brief: accepting new connections
+	*/
 	void listen_for_connections()
 	{
 
@@ -139,11 +150,11 @@ private:
 		acceptor.async_accept(*socket, [this, socket](const boost::system::error_code& error) {
 			if (!error) {
 
-				 
+
 				sockets.emplace_back(socket);
 				host_data.host = socket->remote_endpoint().address().to_string();
 				host_data.port = std::to_string(socket->remote_endpoint().port());
-				
+
 				host_data.make << host_data.host << ':' << host_data.port;
 				host_data.make_hash = sha256(host_data.make.str());
 #ifdef _WIN32
@@ -163,7 +174,7 @@ private:
 #if defined(_WIN32)
 						throw netv::stream_error(std::format("Couldn't add data in `{}`", filename));
 #elif defined(__linux__)
-                        throw netv::stream_error(fmt::format("Couldn't add data in `{}`", filename));
+						throw netv::stream_error(fmt::format("Couldn't add data in `{}`", filename));
 #endif
 					}
 					catch (netv::stream_error& re)
@@ -191,9 +202,9 @@ private:
 #if defined(_WIN32)
 						throw netv::stream_error(std::format("Couldn't add data in `{}`", filename));
 #elif defined(__linux__)					
-                       throw netv::stream_error(fmt::format("Couldn't add data in `{}`", filename));
+						throw netv::stream_error(fmt::format("Couldn't add data in `{}`", filename));
 #endif
-}
+					}
 					catch (netv::stream_error& re)
 					{
 						spdlog::warn("fstream: {}", re.what());
@@ -201,7 +212,7 @@ private:
 				}
 				file.close();
 				system("chmod 444 db.txt"); // set read-only 
-			
+
 #endif
 				spdlog::info("> New connection established: {}", host_data.make_hash);
 				for (const auto& sock : sockets)
@@ -210,11 +221,11 @@ private:
 					boost::asio::write(*sock,
 						boost::asio::buffer(std::format("> New user has joined: {}\n", host_data.make_hash)));
 #elif defined(__linux__)
-boost::asio::write(*sock,
+					boost::asio::write(*sock,
 						boost::asio::buffer(fmt::format("> New user has joined: {}\n", host_data.make_hash)));
 #endif
 				}
-				 ;
+				;
 				data[host_data.make_hash] = socket;
 				++online;
 
@@ -224,7 +235,7 @@ boost::asio::write(*sock,
 			else
 			{
 				spdlog::error("> Error while accepting connection: {}", error.message());
-				 
+
 			}
 			});
 	}
@@ -322,9 +333,9 @@ boost::asio::write(*sock,
 								}
 							}
 							--online;
-							 
+
 							data.erase(it);
-							 
+
 							sockets.erase(std::remove(sockets.begin(), sockets.end(), socket), sockets.end());
 							break;
 						}
@@ -472,7 +483,7 @@ boost::asio::write(*sock,
 									boost::asio::write(*sock,
 										boost::asio::buffer(std::format("Error while sending message: {}",
 											error.message())));
-					
+
 #elif defined(__linux__)
 									boost::asio::write(*sock,
 										boost::asio::buffer(fmt::format("Error while sending message: {}",
@@ -503,15 +514,22 @@ boost::asio::write(*sock,
 		}
 	}
 
-
+	/*
+	* @brief: prints connected sockets' hash to server
+	*/
 	inline void print_data_server() const
 	{
+		/*
+			* for_each
+		*/
 		for (const auto& _data : data)
 		{
 			spdlog::info("Users connected: {}", _data.first);
 		}
 	}
-
+	/*
+		*  @brief: each connected users see the message that someone has been connected.
+	*/
 	inline void print_data(const std::shared_ptr<tcp::socket>& socket) const
 	{
 		for (const auto& sock : sockets)   /// Iterates through all sockets
@@ -525,7 +543,7 @@ boost::asio::write(*sock,
 			}
 		}
 	}
-	/* Timer => 30 seconds: Each 30 seconds we calling update() with its data */
+	/* @brief: each 30 seconds we calling update() with its data */
 	inline void update() {
 		auto timer = std::make_shared<boost::asio::steady_timer>(io_context);
 		timer->expires_after(std::chrono::seconds(30));
@@ -533,21 +551,21 @@ boost::asio::write(*sock,
 			if (!error) {
 				// Perform the update operation here
 				spdlog::info("Online: {}", std::to_string(online));
-				
+
 				for (const auto& sock : sockets)
 				{
 #if defined(_WIN32)
-						boost::asio::write(*sock,
-							boost::asio::buffer(std::format("Online: {}", std::to_string(online))));
+					boost::asio::write(*sock,
+						boost::asio::buffer(std::format("Online: {}", std::to_string(online))));
 
 #elif defined(__linux__)
 					boost::asio::write(*sock,
-						
+
 						boost::asio::buffer(fmt::format("Online: {}", std::to_string(online))));
 
 #endif
 				}
-			// Reset the timer to expire after another 10 seconds
+				// Reset the timer to expire after another 10 seconds
 				print_data_server();
 				update();
 			}
@@ -557,7 +575,7 @@ boost::asio::write(*sock,
 			}
 			});
 	}
-	 
+
 private:
 	/*~~~~~~~~~~~~~BOOST~~~~~~~~~~~~~~*/
 	boost::asio::io_context io_context;
@@ -578,8 +596,5 @@ private:
 };
 
 unsigned short Server::online = 0;
- 
- 
-
 # endif  // __NETV
 # endif // NETWORK_SERVER_HPP

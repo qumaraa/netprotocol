@@ -15,6 +15,7 @@ namespace netv
         system_error(const std::string& msg) : message(msg) { }
 
         virtual const char* what() const noexcept { return message.c_str(); }
+      
 
     private:
         std::string message;
