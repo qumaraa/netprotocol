@@ -8,7 +8,6 @@
  * GitHub: https://github.com/ynwqmv/netprotocol
  *===========================================================================*/
 
-
 #ifndef SYSTEM_EXCEPT_HPP
 #define SYSTEM_EXCEPT_HPP
 
