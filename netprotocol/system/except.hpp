@@ -31,7 +31,6 @@ namespace netv
 
         virtual const char* what() const noexcept { return message.c_str(); }
       
-
     private:
         std::string message;
     };
@@ -50,5 +49,4 @@ namespace netv
 
 
 } // NAMESPACE SYSTEM
-
 #endif // SYSTEM_EXCEPT_HPP

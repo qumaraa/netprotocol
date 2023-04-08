@@ -30,7 +30,8 @@
 # define __NETV 0x79C2        // *** v31170 *** 
 # endif
 #elif defined(__linux__) // Linux
-	# define __NETV 0x79C2L  	
+	
+# define __NETV 0x79C2L  	
 
 #endif
 
@@ -60,6 +61,8 @@
 # include <fmt/format.h> 
 # endif
 
+
+# define __MAX_CHAR_PER_MESSAGE 350 
 
 #ifdef _WIN32
 typedef unsigned short int uint;
@@ -147,7 +150,6 @@ private:
 	*/
 	void listen_for_connections()
 	{
-
 		auto socket = std::make_shared<tcp::socket>(io_context);
 		acceptor.async_accept(*socket, [this, socket](const boost::system::error_code& error) {
 			if (!error) {
@@ -160,9 +162,9 @@ private:
 				host_data.make << host_data.host << ':' << host_data.port;
 				host_data.make_hash = sha256(host_data.make.str());
 #ifdef _WIN32
-
 				std::string filename = "db.txt";
 				SetFileAttributesA(filename.c_str(), FILE_ATTRIBUTE_NORMAL);
+				
 				std::ofstream file;
 				file.open(filename, std::ios::app);
 				if (file.is_open())
@@ -242,7 +244,7 @@ private:
 			});
 	}
 
-
+	 
 	inline void listen_for_messages(std::shared_ptr<tcp::socket> socket, HHash& host_data)
 	{
 
@@ -252,31 +254,47 @@ private:
 			{
 				if (!error)
 				{
-					handleMessage(*message, socket);
-					for (const auto& sock : sockets)
+					if (length > __MAX_CHAR_PER_MESSAGE)
 					{
-						if (sock != socket)
+#if defined(_WIN32)
+						boost::asio::write(*socket, boost::asio::buffer
+							(std::format("\033[41m\r\nMaximum message size:  {} | Current message length: {}\033[0m\r\n",__MAX_CHAR_PER_MESSAGE, length)));
+#elif defined(__linux__)
+						boost::asio::write(*socket, boost::asio::buffer
+						(fmt::format("\033[41m\r\nMaximum message size:  {} | Current message length: {}\033[0m", __MAX_CHAR_PER_MESSAGE, length)));
+ 
+#endif
+
+						listen_for_messages(socket, host_data);
+					}
+					else {
+
+						handleMessage(*message, socket);
+						for (const auto& sock : sockets)
 						{
-							if (message->substr(0, 5) == "/send" or message->substr(0, 6) == "/hello"
-								or message->substr(0, 6) == "/socks" or message->substr(0, 7) == "/online"
-								or message->substr(0, 5) == "/info")
+							if (sock != socket)
 							{
-								/* => nothing: */
-							}
-							else
-							{
+								if (message->substr(0, 5) == "/send" or message->substr(0, 6) == "/hello"
+									or message->substr(0, 6) == "/socks" or message->substr(0, 7) == "/online"
+									or message->substr(0, 5) == "/info")
+								{
+									/* => nothing: */
+								}
+								else
+								{
 
 #if defined(_WIN32)
-								boost::asio::write(*sock, boost::asio::buffer(std::format("\r\n[{}]", std::to_string(socket->remote_endpoint().port()))));
+									boost::asio::write(*sock, boost::asio::buffer(std::format("\r\n[{}]", std::to_string(socket->remote_endpoint().port()))));
 #elif defined(__linux__)
-								boost::asio::write(*sock, boost::asio::buffer(fmt::format("\r\n[{}]", std::to_string(socket->remote_endpoint().port()))));
+									boost::asio::write(*sock, boost::asio::buffer(fmt::format("\r\n[{}]", std::to_string(socket->remote_endpoint().port()))));
 #endif
-								boost::asio::write(*sock, boost::asio::buffer(*message));
-							}
+									boost::asio::write(*sock, boost::asio::buffer(*message));
+								}
 
+							}
 						}
+						listen_for_messages(socket, host_data);
 					}
-					listen_for_messages(socket, host_data);
 				}
 				else if (error == boost::asio::error::eof)
 				{
@@ -345,6 +363,7 @@ private:
 				}
 			});
 	}
+	 
 
 
 	inline void handleMessage(std::string& message, std::shared_ptr<tcp::socket> socket) const
@@ -407,11 +426,11 @@ private:
 					if (sock == socket)
 					{
 #if defined(_WIN32)
-						auto message = std::make_shared<std::string>(std::format("\033[42mNodeJS: installed ({})\r\nVersion: {}\r\nPlatform: Windows ({})\r\nPlatform: Linux ({})\r\nOnline: {}\033[0m\n\r\n",
-							_is_installed_nodejs, __NETV, _WIN32, false, online));
+						auto message = std::make_shared<std::string>(std::format("\033[42mNodeJS: installed ({})\r\nVersion: {}\r\nPlatform: Windows ({})\r\nPlatform: Linux ({})\r\nOnline: {}\r\Maximum message size:  {}\033[0m\n\r\n",
+							_is_installed_nodejs, __NETV, _WIN32, false, online, __MAX_CHAR_PER_MESSAGE));
 #elif defined(__linux__)
-						auto message = std::make_shared<std::string>(fmt::format("\033[42mNodeJS: installed ({})\nVersion: {}\nPlatform: Windows ({})\nPlatform: Linux ({})\nOnline: {}\033[0m\n\r\n",
-							_is_installed_nodejs, __NETV, false, __linux__, online));
+						auto message = std::make_shared<std::string>(fmt::format("\033[42mNodeJS: installed ({})\r\nVersion: {}\r\nPlatform: Windows ({})\r\nPlatform: Linux ({})\r\nOnline: {}\r\nMaximum message size: {}\033[0m\n\r\n",
+							_is_installed_nodejs, __NETV, false, __linux__, online, __MAX_CHAR_PER_MESSAGE));
 #endif 
 						boost::asio::async_write(*sock, boost::asio::buffer(*message),
 							[socket, message](const boost::system::error_code& error, std::size_t bytes_transferred) {
