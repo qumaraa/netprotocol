@@ -6,7 +6,6 @@
 
  * Cross-platform network written by using Boost.Asio
  * GitHub: https://github.com/ynwqmv/netprotocol
- * Dependencies: NodeJS, libspdlog, libboost, libfmt(linux)
  *===========================================================================*/
 
 
