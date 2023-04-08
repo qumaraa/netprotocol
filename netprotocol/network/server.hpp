@@ -16,9 +16,6 @@
 
 **/
 
-
-
-
 # pragma once
 # ifndef NETWORK_SERVER_HPP
 
