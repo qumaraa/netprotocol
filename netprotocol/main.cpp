@@ -4,10 +4,6 @@
 
 
 
-
-
-
-
 # if defined(__NETV) 
 int main(int argc, char* argv[])
 {
