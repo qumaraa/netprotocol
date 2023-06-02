@@ -1,3 +1,4 @@
+###### **⚠️  The project was frozen and stopped developing, but the [latest release](https://github.com/alexanderqmv/netprotocol/releases/tag/0x79C2-venera) is quite workable, although in case of any bugs or problems, we will not be able to take responsibility for it and/or fix the misunderstanding.**
 ## netprotocol
 Official implementation of crossplatfrom [C++ Net-Protocol](https://github.com/alexanderqmv/netprotocol/releases/tag/0x79C2-venera) with Web and GUI Explorers.  
 
