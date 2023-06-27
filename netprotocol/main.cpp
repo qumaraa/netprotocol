@@ -1,13 +1,5 @@
 # include <iostream>
 # include "network/server.hpp"
-
-
-
-
-
-
-
-
 # if defined(__NETV) 
 int main(int argc, char* argv[])
 {
@@ -46,4 +38,3 @@ int main(int argc, char* argv[])
     return 0;
 }
 # endif 
-
